@@ -1,0 +1,93 @@
+import numpy as np
+import pandas as pd
+concrete = pd.read_csv('/content/drive/MyDrive/Data_Analytics/concrete.csv')
+print(concrete)
+print(concrete.head())
+print(concrete.shape)
+print(concrete.describe())
+print(concrete.info())
+
+#Relationship between Independent and dependent variable
+sns.pairplot(concrete, x_vars= ['cement', 'slag', 'ash', 'water', 'superplastic', 'coarseagg', 'fineagg', 'age'], y_vars= 'strength', size = 4, aspect = 1, kind = 'scatter')
+plt.show()
+
+#HeatMap
+sns.heatmap(concrete.corr(), cmap="YlGnBu", annot= True)
+plt.show()
+
+#Strongest relation: Cement
+sns.lmplot(x='cement', y='strength',data=concrete)
+plt.show()
+
+#Distribution of Variables
+import matplotlib.pyplot as plt
+import seaborn as sns
+for col in concrete.columns:
+    plt.figure(figsize=(10,8))
+    sns.distplot(concrete[col])
+    plt.show()
+
+#Feature Scaling
+X = concrete.drop("strength", axis=1)
+Y = concrete["strength"]
+from sklearn. preprocessing import StandardScaler
+scaler = StandardScaler()
+X = scaler.fit_transform(X)
+
+#Training and Testing
+from sklearn.model_selection import train_test_split
+X_train, X_test, Y_train, Y_test = train_test_split(X, Y, train_size = 0.8, test_size = 0.2, random_state = 42)
+X_train
+Y_train
+
+#Using Linear Regression
+from sklearn.linear_model import LinearRegression
+linear_reg = LinearRegression()
+linear_reg.fit(X_train, Y_train)
+pred_lin = linear_reg.predict(X_test)
+from sklearn.metrics import r2_score
+R_Sqrt_lin = r2_score(Y_test, pred_lin)
+R_Sqrt_lin
+
+#Using Lasso Regression
+from sklearn. linear_model import Lasso
+lasso_reg = Lasso()
+lasso_reg.fit(X_train, Y_train)
+pred_lasso = lasso_reg.predict(X_test)
+R_Sqrt_las = r2_score(Y_test, pred_lasso)
+R_Sqrt_las
+
+#Using Ridge Regression
+from sklearn.linear_model import Ridge
+ridge_reg = Ridge()
+ridge_reg.fit(X_train, Y_train)
+pred_rid = ridge_reg.predict(X_test)
+R_Sqrt_rid = r2_score(Y_test, pred_rid)
+R_Sqrt_rid
+
+#Using Elastic Net Regression
+from sklearn.linear_model import ElasticNet
+elastic_reg = ElasticNet()
+elastic_reg.fit(X_train, Y_train)
+pred_elas = elastic_reg.predict(X_test)
+R_Sqrt_elas = r2_score(Y_test, pred_elas)
+R_Sqrt_elas
+
+#Using Random Forest Regression
+from sklearn.ensemble import RandomForestRegressor
+random_reg = RandomForestRegressor()
+random_reg.fit(X_train, Y_train)
+pred_random = random_reg.predict(X_test)
+R_Sqrt_ran = r2_score(Y_test, pred_random)
+R_Sqrt_ran
+
+#Graphical Comparison
+data = {'Ridge':0.6275820024453557, 'Lasso':0.5635577287878153, 'Linear':0.6275531792314851, 'Random Forest':0.8745773925199515, 'Elastic Net': 0.5139601301994472}
+Regressions = list(data.keys())
+R_Squared = list(data.values())
+Compare = plt.figure(figsize = (10, 5))
+plt.bar(Regressions, R_Squared, width = 0.4)
+plt.xlabel("Type of Regression")
+plt.ylabel("R-squared Value")
+plt.title("Comparison with R-squared values of each regression")
+plt.show()
