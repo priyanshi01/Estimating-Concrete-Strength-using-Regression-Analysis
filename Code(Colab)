@@ -27,9 +27,10 @@ for col in concrete.columns:
     sns.distplot(concrete[col])
     plt.show()
 
-# Feature Scaling
+
 X = concrete.drop("strength", axis=1)
 Y = concrete["strength"]
+# Data Standarization
 from sklearn. preprocessing import StandardScaler
 scaler = StandardScaler()
 X = scaler.fit_transform(X)
